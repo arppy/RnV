@@ -78,7 +78,7 @@ def mark_voiced(
     return voiced_flags
 
 
-def train_segmenter(feats_dir, checkpoint_path, gamma):
+def train_segmenter(feats_dir, checkpoint_path, gamma, wav_path):
     checkpoint_path.parent.mkdir(exist_ok=True, parents=True)
 
     segmenter = Segmenter(num_kmeans_classes=100, num_clusters=3, gamma=gamma)
@@ -93,8 +93,8 @@ def train_segmenter(feats_dir, checkpoint_path, gamma):
     utterances = []
     feats_paths = list(feats_dir.rglob("*.pt"))
     for feats_path in tqdm(feats_paths):
-        wav_path = feats_path.parent.parent / "wavs" / feats_path.with_suffix(".wav").name
-        wav, _ = torchaudio.load(wav_path)
+        wav_path_name = wav_path / feats_path.with_suffix(".wav").name
+        wav, _ = torchaudio.load(wav_path_name)
         feats = torch.load(feats_path, weights_only=True)
 
         segments, boundaries = segmenter.segment(feats)
@@ -137,5 +137,11 @@ if __name__ == "__main__":
         help="gamma val",
         type=int,
     )
+    parser.add_argument(
+        "wav_path",
+        metavar="wav-dir",
+        help="path to the directory of wav files (*.wav).",
+        type=Path,
+    )
     args = parser.parse_args()
-    train_segmenter(args.feats_dir, args.checkpoint_path, args.gamma)
+    train_segmenter(args.feats_dir, args.checkpoint_path, args.gamma, args.wav_path)
