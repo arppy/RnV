@@ -48,36 +48,41 @@ tar -xvjf LJSpeech-1.1.tar.bz2
 
 TTS Data Preprocessing Example:
 ```bash
-poetry run python scripts/preprocess_speech_data.py 16000 /path/to/dataset /processed/dataset/output/path
+poetry run python preprocess_speech_data.py 16000 /path/to/dataset /processed/dataset/output/path
 ```
 
 SSL Features Extraction Example:
 ```bash
-poetry run python scripts/extract_dataset_embeddings.py wavlm /processed/dataset/output/path /processed/dataset/output/path
+poetry run python extract_dataset_embeddings.py wavlm /processed/dataset/output/path /processed/dataset/output/path
 ```
 
 ### Train Urhythmic Segmenter
 
 ```bash
-poetry run python recipes/train_urhythmic_segmenter.py /path/to/feats/wavlm checkpoints/segmenter.pth 3
+poetry run python train_urhythmic_segmenter.py /path/to/feats/wavlm checkpoints/segmenter.pth 3
 ```
 
 ### Train Urhythmic Rhythm Model
 
 ```bash
-poetry run python recipes/train_urhythmic_rhythm_model.py speaker_id global /path/to/feats/wavlm checkpoints/segmenter.pth path/to/save/output
+poetry run python train_urhythmic_rhythm_model.py speaker_id global /path/to/feats/wavlm checkpoints/segmenter.pth path/to/save/output
 
-poetry run python recipes/train_urhythmic_rhythm_model.py speaker_id fine /path/to/feats/wavlm checkpoints/segmenter.pth path/to/save/output
+poetry run python train_urhythmic_rhythm_model.py speaker_id fine /path/to/feats/wavlm checkpoints/segmenter.pth path/to/save/output
 ```
 
 ### Train Syllable Rhythm model
 
 ```bash
-poetry run python recipes/train_syllable_rhythm_model.py speaker_id /path/to/speaker/audio checkpoints/segmenter.pth /path/to/save/output
+poetry run python train_syllable_rhythm_model.py speaker_id /path/to/speaker/audio checkpoints/segmenter.pth /path/to/save/output
 ```
 
 ## Conversion
 
+```bash
+python convert.py LaciDys LaciControl urhythmic fine LaciDys/LaciDys-wavlm/ LaciControl/LaciControl-wavlm/ /home/berta/models/vocoder-hifigan/wavlm-hifigan-prematch_g_02500000/ Szindbad/Szindbad-segmenter.pth knnvc
+```
+
+Original code:
 ```python
 from pathlib import Path
 
