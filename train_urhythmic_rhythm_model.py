@@ -53,7 +53,7 @@ if __name__ == "__main__":
         "speaker_id",
         metavar="speaker-id",
         help="Speaker ID.",
-        type=Path,
+        type=str,
     )
     parser.add_argument(
         "model_type",
