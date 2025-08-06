@@ -20,13 +20,7 @@ def find_wav_paths(root_dir: str | os.PathLike[Any]):
 
 
 def load_target_style_feats(feats_base_path, max_num_files=1000):
-    feats = []
-    for filepath in os.listdir(feats_base_path)[:max_num_files]:
-        if ".pt" in filepath:
-            filepath = os.path.join(feats_base_path, filepath)
-            feats.append(torch.load(filepath, weights_only=False))
-    feats = torch.concat(feats, dim=0).cpu()
-    return feats
+    return torch.concat(list(Path(feats_base_path).rglob("*.pt"))[:max_num_files]).cpu()
 
 
 def get_vocoder_checkpoint_path(checkpoints_dir):
