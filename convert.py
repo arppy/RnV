@@ -22,6 +22,7 @@ def convert(
     output_dir: Path,
 ):
     vocoder_checkpoint_path = get_vocoder_checkpoint_path(vocoder_checkpoint_path)
+    save_path = str(output_dir)
 
     # Initialize the converter with the vocoder checkpoint and rhythm conversion settings
     # You can choose between "urhythmic" or "syllable" for rhythm_converter
@@ -39,13 +40,13 @@ def convert(
         lambda_rate = 1.
 
         if knnvc == "knnvc" :
-            converter.convert(source_feats, tgt_feats_dir, source_rhythm_model, target_rhythm_model, segmenter_path, knnvc_topk, lambda_rate, save_path=output_dir)
+            converter.convert(source_feats, tgt_feats_dir, source_rhythm_model, target_rhythm_model, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path)
         elif knnvc == "knnvc-only" :
             # KnnVc Voice Conversion Only (Without Rhythm Conversion)
-            converter.convert(source_feats, tgt_feats_dir, None, None, segmenter_path, knnvc_topk, lambda_rate, save_path=output_dir)
+            converter.convert(source_feats, tgt_feats_dir, None, None, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path)
         else :
             # Rhythm Conversion Only
-            converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path, save_path=output_dir)
+            converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path, save_path=save_path)
 
 
 if __name__ == "__main__":
