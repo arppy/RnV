@@ -22,6 +22,7 @@ def convert(
     output_dir: Path,
 ):
     vocoder_checkpoint_path = get_vocoder_checkpoint_path(vocoder_checkpoint_path)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     # Initialize the converter with the vocoder checkpoint and rhythm conversion settings
     # You can choose between "urhythmic" or "syllable" for rhythm_converter
