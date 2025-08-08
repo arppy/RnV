@@ -105,7 +105,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "knnvc",
         metavar="knnvc",
-        choices=["knnvc", "rhythm-only", "knnvc-only"],
+        choices=["knnvc", "rhythm", "knnvc-only"],
         type=str,
     )
     parser.add_argument("out_dir", metavar="out-dir", type=Path, help="path to the output directory.")
