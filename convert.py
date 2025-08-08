@@ -30,7 +30,7 @@ def convert(
     converter = Converter(vocoder_checkpoint_path, rhythm_converter=model_class_str, rhythm_model_type=model_type_str) # or "fine" for fine-grained rhythm conversion
 
     source_rhythm_model = f"{src_speaker_id}/{src_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
-    target_rhythm_model = f"{tgt_feats_dir}/{tgt_feats_dir}_{model_type_str}_{model_class_str}_model.pth"
+    target_rhythm_model = f"{tgt_speaker_id}/{tgt_feats_dir}_{model_type_str}_{model_class_str}_model.pth"
 
     for feat_path in tqdm(list(src_feats_dir.rglob("*.pt"))):
         source_feats = torch.load(feat_path, map_location="cpu")
