@@ -30,9 +30,12 @@ def convert(
 
     converter = Converter(vocoder_checkpoint_path, rhythm_converter=model_class_str, rhythm_model_type=model_type_str) # or "fine" for fine-grained rhythm conversion
 
-    source_rhythm_model = f"{src_speaker_id}/{src_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
-    target_rhythm_model = f"{tgt_speaker_id}/{tgt_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
-
+    if model_class_str == "urhythmic" :
+        source_rhythm_model = f"{src_speaker_id}/{src_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
+        target_rhythm_model = f"{tgt_speaker_id}/{tgt_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
+    else :
+        source_rhythm_model = f"{src_speaker_id}/{src_speaker_id}_{model_class_str}_models.pth"
+        target_rhythm_model = f"{tgt_speaker_id}/{tgt_speaker_id}_{model_class_str}_models.pth"
     for feat_path in tqdm(list(src_feats_dir.rglob("*.pt"))):
         source_feats = torch.load(feat_path, map_location="cpu")
         # Rhythm and Voice Conversion
@@ -105,7 +108,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "knnvc",
         metavar="knnvc",
-        choices=["knnvc", "rhythm", "knnvc-only"],
+        choices=["knnvc", "rhythm", "knnvc-only", "syllable"],
         type=str,
     )
     parser.add_argument("out_dir", metavar="out-dir", type=Path, help="path to the output directory.")
