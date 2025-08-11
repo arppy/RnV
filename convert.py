@@ -44,8 +44,10 @@ def convert(
         lambda_rate = 1.
         save_path = output_dir / feat_path.name
         save_path = save_path.with_suffix(".wav")
+        source_wav = src_wav_dir / feat_path.name
+        source_wav = source_wav.with_suffix(".wav")
         if knnvc == "knnvc" :
-            converter.convert(source_feats, tgt_feats_dir, source_rhythm_model, target_rhythm_model, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path)
+            converter.convert(source_feats, tgt_feats_dir, source_rhythm_model, target_rhythm_model, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path, source_wav=source_wav)
         elif knnvc == "knnvc-only" :
             # KnnVc Voice Conversion Only (Without Rhythm Conversion)
             converter.convert(source_feats, tgt_feats_dir, None, None, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path)
@@ -53,8 +55,6 @@ def convert(
             # Rhythm Conversion Only
             converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path, save_path=save_path)
         else :
-            source_wav = src_wav_dir / feat_path.name
-            source_wav = source_wav.with_suffix(".wav")
             converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path,
                               save_path=save_path, source_wav=source_wav)
 
