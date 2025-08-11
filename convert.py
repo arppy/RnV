@@ -20,6 +20,7 @@ def convert(
     segmenter_path: Path,
     knnvc: str,
     output_dir: Path,
+    src_wav_dir: Path,
 ):
     vocoder_checkpoint_path = get_vocoder_checkpoint_path(vocoder_checkpoint_path)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -48,9 +49,14 @@ def convert(
         elif knnvc == "knnvc-only" :
             # KnnVc Voice Conversion Only (Without Rhythm Conversion)
             converter.convert(source_feats, tgt_feats_dir, None, None, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path)
-        else :
+        elif knnvc == "rhythm" :
             # Rhythm Conversion Only
             converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path, save_path=save_path)
+        else :
+            source_wav = src_wav_dir / feat_path.name
+            source_wav = source_wav.with_suffix(".wav")
+            converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path,
+                              save_path=save_path, source_wav=source_wav)
 
 
 if __name__ == "__main__":
@@ -112,6 +118,7 @@ if __name__ == "__main__":
         type=str,
     )
     parser.add_argument("out_dir", metavar="out-dir", type=Path, help="path to the output directory.")
+    parser.add_argument("src_wav_dir", metavar="src-wav-dir", type=Path, help="path to the source wav directory.")
     args = parser.parse_args()
     convert(
         args.src_speaker_id,
@@ -124,4 +131,5 @@ if __name__ == "__main__":
         args.segmenter_checkpoint_path,
         args.knnvc,
         args.out_dir,
+        args.src_wav_dir,
     )
