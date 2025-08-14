@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import torch
+import librosa
 from tqdm import tqdm
 
 import argparse
@@ -46,8 +47,9 @@ def convert(
         save_path = save_path.with_suffix(".wav")
         source_wav = src_wav_dir / feat_path.name
         source_wav = source_wav.with_suffix(".wav")
+        audio, fs = librosa.load(source_wav, sr=None)
         if knnvc == "knnvc" :
-            converter.convert(source_feats, tgt_feats_dir, source_rhythm_model, target_rhythm_model, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path, source_wav=source_wav)
+            converter.convert(source_feats, tgt_feats_dir, source_rhythm_model, target_rhythm_model, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path, source_wav=audio)
         elif knnvc == "knnvc-only" :
             # KnnVc Voice Conversion Only (Without Rhythm Conversion)
             converter.convert(source_feats, tgt_feats_dir, None, None, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path)
@@ -56,7 +58,7 @@ def convert(
             converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path, save_path=save_path)
         else :
             converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path,
-                              save_path=save_path, source_wav=source_wav)
+                              save_path=save_path, source_wav=audio)
 
 
 if __name__ == "__main__":
