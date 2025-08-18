@@ -45,8 +45,8 @@ def preprocess_torgo(sr, source_dir, dest_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Preprocess Torgo dataset.")
-    parser.add_argument("--base_dir", required=True, help="Path to the base directory of the Torgo dataset.")
-    parser.add_argument("--target_dir", required=True, help="Path to the target directory for processed data.")
+    parser.add_argument("--base_dir", required=True, help="Path to the base directory of the Torgo dataset.", type=Path)
+    parser.add_argument("--target_dir", required=True, help="Path to the target directory for processed data.", type=Path)
     args = parser.parse_args()
 
     SAMPLE_RATE = 16000
