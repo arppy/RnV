@@ -3,6 +3,7 @@ from pathlib import Path
 import torch
 import librosa
 from tqdm import tqdm
+import gc
 
 import argparse
 
@@ -39,26 +40,38 @@ def convert(
         source_rhythm_model = f"{src_speaker_id}/{src_speaker_id}_{model_class_str}_models.pth"
         target_rhythm_model = f"{tgt_speaker_id}/{tgt_speaker_id}_{model_class_str}_models.pth"
     for feat_path in tqdm(list(src_feats_dir.rglob("*.pt"))):
-        source_feats = torch.load(feat_path, map_location="cpu")
-        # Rhythm and Voice Conversion
-        knnvc_topk = 4
-        lambda_rate = 1.
-        save_path = output_dir / feat_path.name
-        save_path = save_path.with_suffix(".wav")
-        source_wav = src_wav_dir / feat_path.name
-        source_wav = source_wav.with_suffix(".wav")
-        audio, fs = librosa.load(source_wav, sr=None)
-        if knnvc == "knnvc" :
-            converter.convert(source_feats, tgt_feats_dir, source_rhythm_model, target_rhythm_model, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path, source_wav=audio)
-        elif knnvc == "knnvc-only" :
-            # KnnVc Voice Conversion Only (Without Rhythm Conversion)
-            converter.convert(source_feats, tgt_feats_dir, None, None, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path)
-        elif knnvc == "rhythm" :
-            # Rhythm Conversion Only
-            converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path, save_path=save_path)
-        else :
-            converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path,
-                              save_path=save_path, source_wav=audio)
+        try:
+            source_feats = torch.load(feat_path, map_location="cpu")
+            # Rhythm and Voice Conversion
+            knnvc_topk = 4
+            lambda_rate = 1.
+            save_path = output_dir / feat_path.name
+            save_path = save_path.with_suffix(".wav")
+            source_wav = src_wav_dir / feat_path.name
+            source_wav = source_wav.with_suffix(".wav")
+            audio, fs = librosa.load(source_wav, sr=None)
+            if knnvc == "knnvc" :
+                converter.convert(source_feats, tgt_feats_dir, source_rhythm_model, target_rhythm_model, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path, source_wav=audio)
+            elif knnvc == "knnvc-only" :
+                # KnnVc Voice Conversion Only (Without Rhythm Conversion)
+                converter.convert(source_feats, tgt_feats_dir, None, None, segmenter_path, knnvc_topk, lambda_rate, save_path=save_path)
+            elif knnvc == "rhythm" :
+                # Rhythm Conversion Only
+                converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path, save_path=save_path)
+            else :
+                converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path,
+                                  save_path=save_path, source_wav=audio)
+        finally:
+            # Clear memory after each iteration
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            gc.collect()
+            # Explicitly delete large variables
+            del source_feats
+            if 'audio' in locals():
+                del audio
+            # Force garbage collection
+            gc.collect()
 
 
 if __name__ == "__main__":
