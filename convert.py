@@ -70,6 +70,14 @@ def convert(
                 torch.cuda.empty_cache()
             gc.collect()
             continue
+        except IndexError:
+            print(f"IndexError on file: {feat_path.name}")
+            print(f"File size: {source_feats.element_size() * source_feats.nelement() / 1024 ** 3:.2f} GB")
+            # Skip this file and continue
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            gc.collect()
+            continue
         finally:
             # Always clear memory
             if torch.cuda.is_available():
