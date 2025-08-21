@@ -61,18 +61,24 @@ def convert(
             else :
                 converter.convert(source_feats, None, source_rhythm_model, target_rhythm_model, segmenter_path,
                                   save_path=save_path, source_wav=audio)
-        finally:
-            # Clear memory after each iteration
+        except torch.cuda.OutOfMemoryError:
+            print(f"OUT OF MEMORY on file: {feat_path.name}")
+            print(f"File size: {source_feats.element_size() * source_feats.nelement() / 1024 ** 3:.2f} GB")
+
+            # Skip this file and continue
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
             gc.collect()
-            # Explicitly delete large variables
-            del source_feats
+            continue
+        finally:
+            # Always clear memory
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            gc.collect()
+            if 'source_feats' in locals():
+                del source_feats
             if 'audio' in locals():
                 del audio
-            # Force garbage collection
-            gc.collect()
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert.")
