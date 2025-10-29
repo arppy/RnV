@@ -1,0 +1,2 @@
+
+nohup bash -c 'for i in C_{001..050}; do python train_urhythmic_rhythm_model_by_speaker.py "$i" global HunDys/HunDys-wavlm/ Szindbad/Szindbad-segmenter.pth HunDys/; done' > nohup_train_uryglobal_HunDys.log 2>&1 &
