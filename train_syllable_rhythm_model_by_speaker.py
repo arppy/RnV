@@ -37,7 +37,7 @@ def compute_speaker_rhythm_model(speaker_id, audio_data_path, segmenter_checkpoi
     syllable_segmenter = SyllableSegmenter(urhythmic_segmenter_checkpoint_path=segmenter_checkpoint)
     os.makedirs(output_dir, exist_ok=True)
 
-    audio_filepaths = list(Path(audio_data_path).rglob(speaker_id / "*.wav"))
+    audio_filepaths = list(Path(audio_data_path).rglob(f"{speaker_id}/*.wav"))
     if len(audio_filepaths) == 0:
         print("No audio files found for speaker.")
         return
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         "speaker_id",
         metavar="speaker-id",
         help="Speaker ID.",
-        type=Path,
+        type=str,
     )
     parser.add_argument(
         "audio_dir",
