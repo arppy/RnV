@@ -10,4 +10,4 @@ nohup bash -c 'for i in C_{001..050}; do python train_syllable_rhythm_model_by_s
 
 
 
-nohup bash -c  'for i in C_{001..050}; do CUDA_VISIBLE_DEVICES=3 python convert_by_speaker.py "$i" Szindbad syllable fine HunDys/HunDys-wavlm/ Szindbad/Szindbad-wavlm/ /home/berta/models/vocoder-hifigan/wavlm-hifigan-prematch_g_02500000/ Szindbad/Szindbad-segmenter.pth knnvc HunDys/"$i""_syllable_models.pth" /home/berta/data/HungarianDysartriaDatabase/preprocessed_rnv_wav/' > nohup_convert_syllablefine_HunDys.log 2>&1 &
+nohup bash -c  'for i in C_{001..050}; do CUDA_VISIBLE_DEVICES=3 python convert_by_speaker.py "$i" Szindbad syllable fine HunDys/HunDys-wavlm/ Szindbad/Szindbad-wavlm/ /home/berta/models/vocoder-hifigan/wavlm-hifigan-prematch_g_02500000/ Szindbad/Szindbad-segmenter.pth knnvc HunDys/HunDys_knnvc_syllable_fine_wav /home/berta/data/HungarianDysartriaDatabase/preprocessed_rnv_wav/; done' > nohup_convert_syllablefine_HunDys.log 2>&1 &

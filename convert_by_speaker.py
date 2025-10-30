@@ -32,13 +32,13 @@ def convert(
     # and "global" or "fine" for rhythm_model_type
 
     converter = Converter(vocoder_checkpoint_path, rhythm_converter=model_class_str, rhythm_model_type=model_type_str) # or "fine" for fine-grained rhythm conversion
-
+    parent_dir = src_feats_dir.parent.name
     if model_class_str == "urhythmic" :
-        source_rhythm_model = f"{src_speaker_id}/{src_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
-        target_rhythm_model = f"{tgt_speaker_id}/{tgt_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
+        source_rhythm_model = f"{parent_dir}/{src_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
+        target_rhythm_model = f"{parent_dir}/{tgt_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
     else :
-        source_rhythm_model = f"{src_speaker_id}/{src_speaker_id}_{model_class_str}_models.pth"
-        target_rhythm_model = f"{tgt_speaker_id}/{tgt_speaker_id}_{model_class_str}_models.pth"
+        source_rhythm_model = f"{parent_dir}/{src_speaker_id}_{model_class_str}_models.pth"
+        target_rhythm_model = f"{parent_dir}/{tgt_speaker_id}_{model_class_str}_models.pth"
     for feat_path in tqdm(list(src_feats_dir.rglob(src_speaker_id+"*.pt"))):
         try:
             source_feats = torch.load(feat_path, map_location="cpu")
