@@ -35,10 +35,10 @@ def convert(
     parent_dir = src_feats_dir.parent.name
     if model_class_str == "urhythmic" :
         source_rhythm_model = f"{parent_dir}/{src_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
-        target_rhythm_model = f"{parent_dir}/{tgt_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
+        target_rhythm_model = f"{tgt_speaker_id}/{tgt_speaker_id}_{model_type_str}_{model_class_str}_model.pth"
     else :
         source_rhythm_model = f"{parent_dir}/{src_speaker_id}_{model_class_str}_models.pth"
-        target_rhythm_model = f"{parent_dir}/{tgt_speaker_id}_{model_class_str}_models.pth"
+        target_rhythm_model = f"{tgt_speaker_id}/{tgt_speaker_id}_{model_class_str}_models.pth"
     for feat_path in tqdm(list(src_feats_dir.rglob(src_speaker_id+"*.pt"))):
         try:
             source_feats = torch.load(feat_path, map_location="cpu")
