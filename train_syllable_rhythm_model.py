@@ -43,7 +43,17 @@ def compute_speaker_rhythm_model(speaker_id, audio_data_path, segmenter_checkpoi
         return
 
     speaker_peak_to_peak_durations_in_s, speaker_silence_durations_in_s = get_speaker_peak_to_peak_and_silence_durations(syllable_segmenter, audio_filepaths)
-    speaker_speaking_rate = len(speaker_peak_to_peak_durations_in_s) / sum(speaker_peak_to_peak_durations_in_s)
+    # --- ADD SAFETY CHECKS HERE ---
+    if len(speaker_peak_to_peak_durations_in_s) == 0:
+        print(f"Error: No syllables detected in any audio file for speaker {speaker_id}. Skipping model saving.")
+        return
+
+    total_syllable_duration = sum(speaker_peak_to_peak_durations_in_s)
+    if total_syllable_duration <= 0:
+        print(f"Error: Total syllable duration is zero or negative for speaker {speaker_id}. Skipping.")
+        return
+
+    speaker_speaking_rate = len(speaker_peak_to_peak_durations_in_s) / total_syllable_duration
     print("Speaking rate:", speaker_speaking_rate)
 
     syllable_shape, floc, syllable_scale = stats.gamma.fit(speaker_peak_to_peak_durations_in_s, floc=0)
