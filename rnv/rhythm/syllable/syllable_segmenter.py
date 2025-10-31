@@ -47,8 +47,6 @@ class SyllableSegmenter:
         return filtered_peak_indices, speech_segments, silence_segments
 
     def get_audio_peak_to_peak_and_silence_durations(self, wav, feats):
-        if len(wav) > self.sr * 60:
-            return [], []
 
         filtered_peak_indices, speech_segments, silence_segments = self.get_segments_and_filtered_peaks(wav, feats)
 
