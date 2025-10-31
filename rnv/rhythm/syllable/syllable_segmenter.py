@@ -21,8 +21,8 @@ class SyllableSegmenter:
 
         segments, boundaries = self.urhythmic_segmenter(feats)
         # Fix sampling frequencies
-        peak_indices = [index * 16 for index in peak_indices]
-        valley_indices = [index * 16 for index in valley_indices]
+        #peak_indices = [index * 16 for index in peak_indices]
+        #valley_indices = [index * 16 for index in valley_indices]
         boundaries = [boundary * 320 for boundary in boundaries]  # 320 = 16kHz * 20ms
         boundaries = [max(boundary, 0) for boundary in boundaries]
 
