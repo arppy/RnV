@@ -30,7 +30,9 @@ def get_speaker_peak_to_peak_and_silence_durations(syllable_segmenter, audio_fil
         print("Audio:", wav.shape, "SR:", sr)
         print("Features:", feats.shape, feats.dtype, feats.min(), feats.max())
         peak_to_peak_durations_in_s, silence_durations_in_s = syllable_segmenter.get_audio_peak_to_peak_and_silence_durations(wav, feats)
-
+        print("Syllable durations (s):", peak_to_peak_durations_in_s)
+        print("Silence durations (s):", silence_durations_in_s)
+        print("Total syllables:", len(peak_to_peak_durations_in_s))
         speaker_peak_to_peak_durations_in_s.extend(peak_to_peak_durations_in_s)
         speaker_silence_durations_in_s.extend(silence_durations_in_s)
 
