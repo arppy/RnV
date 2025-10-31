@@ -27,6 +27,8 @@ def get_speaker_peak_to_peak_and_silence_durations(syllable_segmenter, audio_fil
             print(f"Warning: No feature file found at {feat_path}. Skipping.")
             continue
         feats = torch.load(feat_path, weights_only=True).cpu()
+        print("Audio:", wav.shape, "SR:", sr)
+        print("Features:", feats.shape, feats.dtype, feats.min(), feats.max())
         peak_to_peak_durations_in_s, silence_durations_in_s = syllable_segmenter.get_audio_peak_to_peak_and_silence_durations(wav, feats)
 
         speaker_peak_to_peak_durations_in_s.extend(peak_to_peak_durations_in_s)
