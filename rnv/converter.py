@@ -78,22 +78,38 @@ class Converter:
                 rhythm_feats = self.rhythm_converter(source_feats)
             return rhythm_feats
 
-    def convert_voice(self, source_feats, target_style_feats_path, knnvc_topk, interpolation_rate, max_target_num_files=1000):
+    def convert_voice(self, source_feats, target_style_feats_path, knnvc_topk, interpolation_rate, max_target_num_files=1000,chunk_size=5000):
         if target_style_feats_path is None:
             return source_feats
-        source_feats = source_feats.to(self.device)
         if abs(interpolation_rate) < 1e-9:
             return source_feats
+        source_feats = source_feats.to(self.device)
         with torch.no_grad():
             if target_style_feats_path != self.target_style_feats_path:
                 self.target_style_feats_path = target_style_feats_path
-                self.target_style_feats = load_target_style_feats(target_style_feats_path, max_target_num_files)
-            selected_feats = knn_vc(
-                source_feats,
-                self.target_style_feats,
-                topk=knnvc_topk,
-                device=self.device,
-            )
+                self.target_style_feats = load_target_style_feats(target_style_feats_path, max_target_num_files).to(self.device)
+            T = source_feats.size(0)
+            if T <= chunk_size:
+                selected_feats = knn_vc(
+                    source_feats,
+                    self.target_style_feats,
+                    topk=knnvc_topk,
+                    device=self.device,
+                )
+            else :
+                selected_chunks = []
+                for i in range(0, T, chunk_size):
+                    chunk = source_feats[i:i + chunk_size]
+                    selected_chunk = knn_vc(
+                        chunk,
+                        self.target_style_feats,
+                        topk=knnvc_topk,
+                        device=self.device,
+                    )
+                    selected_chunks.append(selected_chunk.cpu())  # Free GPU memory early
+                    del chunk, selected_chunk
+                selected_feats = torch.cat(selected_chunks, dim=0).to(self.device)
+
             converted_feats = interpolation_rate * selected_feats + (1.0 - interpolation_rate) * source_feats
             return converted_feats
 
