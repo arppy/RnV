@@ -22,28 +22,10 @@ def get_speaker_peak_to_peak_and_silence_durations(syllable_segmenter, audio_fil
     speaker_silence_durations_in_s = []
 
     for audio_path in tqdm(audio_filepaths):
-        wav, sr = librosa.load(audio_path, sr=16000)
-        wav = torch.from_numpy(wav).float().to('cuda')  # Move to GPU early
-        all_feats = []
-        # Chunk if long
-        max_chunk_samples = 16000 * 100  # 100 seconds
-        if wav.size(0) > max_chunk_samples:
-            chunks = torch.split(wav, max_chunk_samples)
-        else:
-            chunks = [wav]
-        for chunk in chunks:
-            # Extract features per chunk
-            # ⚠️ You may need to adapt extract_framewise_features to accept tensor input
-            feats = feature_extractor.extract_framewise_features_from_tensor(
-                chunk.unsqueeze(0), sr=16000
-            ).cpu()  # Move to CPU immediately to free GPU memory
-            all_feats.append(feats)
-            del feats  # Explicitly delete
+        wav, sr = librosa.load(audio_path, sr=None)
+        feats = feature_extractor.extract_framewise_features(audio_path, output_layer=None).cpu()
 
-        # Concatenate features along time dimension (dim=1 usually)
-        feats = torch.cat(all_feats, dim=1)
-
-        peak_to_peak_durations_in_s, silence_durations_in_s = syllable_segmenter.get_audio_peak_to_peak_and_silence_durations(wav.cpu().numpy(), feats)
+        peak_to_peak_durations_in_s, silence_durations_in_s = syllable_segmenter.get_audio_peak_to_peak_and_silence_durations(wav, feats)
 
         speaker_peak_to_peak_durations_in_s.extend(peak_to_peak_durations_in_s)
         speaker_silence_durations_in_s.extend(silence_durations_in_s)
