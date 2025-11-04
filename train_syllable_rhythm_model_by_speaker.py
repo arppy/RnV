@@ -26,7 +26,7 @@ def get_speaker_peak_to_peak_and_silence_durations(syllable_segmenter, audio_fil
         wav = torch.from_numpy(wav).float().to('cuda')  # Move to GPU early
         all_feats = []
         # Chunk if long
-        max_chunk_samples = 16000 * 15  # 15 seconds
+        max_chunk_samples = 16000 * 100  # 100 seconds
         if wav.size(0) > max_chunk_samples:
             chunks = torch.split(wav, max_chunk_samples)
         else:
